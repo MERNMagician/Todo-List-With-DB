@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 vite.config.js
+package-lock.json
+package.json
 *.local
 
 # Editor directories and files

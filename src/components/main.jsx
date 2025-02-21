@@ -1,49 +1,79 @@
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
+import axios from "axios";
 import Task from "./task";
 import Status from "./status";
 
 const Main = () => {
   const [currentTasks, updateTask] = useState([]);
-  const [currentValue, getCurrentValue] = useState("");
-  let [completed, setCompleted] = useState(0);
-  let [inProgress, setInProgress] = useState(0);
+  const [task, setTask] = useState("");
+  const [id, setId] = useState(null);
+  const [message, setMessage] = useState("");
+  const [error_msg, setErrorMessage] = useState("");
 
-  useEffect(() => {
-    document.getElementById("input").value = "";
-    localStorage.setItem("Task", JSON.stringify(currentTasks));
+  // !FIx the querying problem
+  //! Implement deletion and updating of data
+
+  TODO: useEffect(() => {
+    axios
+      .get(
+        "http://localhost/PHP-Sessions/React-PHP-Api/todo-list/createConnection.php"
+      )
+      .then((response) => {
+        updateTask(response.data);
+      })
+      .catch((error) => {
+        console.error("Error at getting php data");
+      });
   }, [currentTasks]);
 
-  const show_alert_message = () => {
-    Swal.fire({
-      title: "Error",
-      text: "Input cannot be empty",
-      icon: "error",
-    });
+  useEffect(() => {
+    if (message) {
+      show_success_message(message);
+    }
+  }, [message]);
+
+  useEffect(() => {
+    if (error_msg) {
+      show_alert_message(error_msg);
+    }
+  }, [error_msg]);
+
+  const addTask = () => {
+    axios
+      .post(
+        "http://localhost/PHP-Sessions/React-PHP-Api/todo-list/addTask.php",
+        { id, task }
+      )
+      .then((response) => {
+        setMessage(response.data.message);
+      })
+      .catch((error) => {
+        setErrorMessage("Error at adding user");
+      });
   };
 
-  const show_success_message = () => {
-    console.log(inProgress);
+  const show_alert_message = (error_message) => {
+    Swal.fire({
+      title: "Error",
+      text: error_message,
+      icon: "error",
+    });
+    setErrorMessage("");
+  };
+
+  const show_success_message = (success_message) => {
     Swal.fire({
       title: "Success",
-      text: "Task Added Successfully",
+      text: success_message,
       icon: "success",
     });
+
+    setMessage("");
   };
 
   const handleValue = (event) => {
-    getCurrentValue(event.target.value);
-  };
-
-  const addTask = () => {
-    if (!currentValue) {
-      show_alert_message();
-      return;
-    }
-    updateTask([...currentTasks, currentValue]);
-    show_success_message();
-    getCurrentValue("");
-    setInProgress(inProgress + 1);
+    setTask(event.target.value);
   };
 
   return (
@@ -74,10 +104,8 @@ const Main = () => {
         </section>
       </section>
       <div className="flex flex-col gap-5">
-        {<Status completed={completed} pending={inProgress} />}
-
-        {currentTasks.map((item) => (
-          <Task taskName={item} />
+        {currentTasks.map((tasks) => (
+          <Task taskName={tasks} />
         ))}
       </div>
     </div>
