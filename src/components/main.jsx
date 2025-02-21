@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Swal from "sweetalert2";
 import axios from "axios";
 import Task from "./task";
-import Status from "./status";
 
 const Main = () => {
   const [currentTasks, updateTask] = useState([]);
@@ -11,8 +10,8 @@ const Main = () => {
   const [message, setMessage] = useState("");
   const [error_msg, setErrorMessage] = useState("");
 
-  // !FIx the querying problem
-  //! Implement deletion and updating of data
+  // ! FIx the querying problem
+  // ! Implement deletion and updating of data
 
   TODO: useEffect(() => {
     axios
@@ -30,6 +29,7 @@ const Main = () => {
   useEffect(() => {
     if (message) {
       show_success_message(message);
+      document.getElementById("input").value = "";
     }
   }, [message]);
 
@@ -104,8 +104,8 @@ const Main = () => {
         </section>
       </section>
       <div className="flex flex-col gap-5">
-        {currentTasks.map((tasks) => (
-          <Task taskName={tasks} />
+        {currentTasks.map((item) => (
+          <Task taskName={item} />
         ))}
       </div>
     </div>

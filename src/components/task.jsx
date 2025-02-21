@@ -1,36 +1,55 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Task = ({ taskName }) => {
-  const dataBase = localStorage.getItem("Task");
-  const [taskStorage, insertTask] = useState([]);
-  const [handleEvent, setEvent] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  //TODO:
-  // Implement crud
-
-  const deleteTask = () => {
-    const previousTask = JSON.parse(dataBase);
-    let stored_task = [];
-
-    if (previousTask.length > 1) {
-      previousTask.map((item) => {
-        stored_task.push(item);
-      });
+  useState(() => {
+    if (successMessage) {
+      show_deletion_success(successMessage);
     }
+  }, [successMessage]);
 
-    const toDelete = getToDelete();
+  useState(() => {
+    if (errorMessage) {
+      show_error_message(errorMessage);
+    }
+  }, [errorMessage]);
 
-    console.log(toDelete);
+  const deleteTask = (event) => {
+    const innerParent = event.target.parentNode;
+    const mainParent = innerParent.parentNode;
+    const taskToRemove = mainParent.childNodes[0].textContent;
+
+    axios
+      .post(
+        "http://localhost/PHP-Sessions/React-PHP-Api/todo-list/deleteTask.php",
+        { taskToRemove }
+      )
+      .then((response) => {
+        setSuccessMessage(response.data.success_message);
+      })
+      .catch((error) => {
+        setErrorMessage(error.data.error_message);
+      });
   };
 
-  const getToDelete = () => {
-    return handleEvent;
+  const show_deletion_success = () => {
+    Swal.fire({
+      title: "Success",
+      text: "Task Deletion Successfull",
+      icon: "success",
+    });
   };
 
-  const getCurrentEvent = (event) => {
-    setEvent(event);
-    console.log(handleEvent);
+  const show_error_message = () => {
+    Swal.fire({
+      title: "Error",
+      text: "Task Deletion Failed",
+      icon: "error",
+    });
   };
 
   return (
@@ -42,10 +61,7 @@ const Task = ({ taskName }) => {
         </button>
         <button
           className="border-1 border-black rounded-lg p-2  bg-red-600 text-white hover:opacity-75 cursor-pointer font-[Kanit] hover:text-black"
-          onClick={() => {
-            getCurrentEvent();
-            deleteTask();
-          }}
+          onClick={deleteTask}
         >
           Delete
         </button>
