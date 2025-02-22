@@ -6,13 +6,14 @@ const Task = ({ taskName }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  useState(() => {
+  useEffect(() => {
+    console.log(successMessage);
     if (successMessage) {
       show_deletion_success(successMessage);
     }
   }, [successMessage]);
 
-  useState(() => {
+  useEffect(() => {
     if (errorMessage) {
       show_error_message(errorMessage);
     }
@@ -29,14 +30,17 @@ const Task = ({ taskName }) => {
         { taskToRemove }
       )
       .then((response) => {
-        setSuccessMessage(response.data.success_message);
+        console.log(response.data);
+        setSuccessMessage(response.data);
       })
       .catch((error) => {
-        setErrorMessage(error.data.error_message);
+        setErrorMessage(error.data);
       });
   };
 
   const show_deletion_success = () => {
+    console.log("Deletion success");
+
     Swal.fire({
       title: "Success",
       text: "Task Deletion Successfull",
