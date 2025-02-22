@@ -8,7 +8,6 @@ const Task = ({ taskName }) => {
   const [updateMessage, setUpdateMessage] = useState("");
 
   useEffect(() => {
-    console.log(successMessage);
     if (successMessage) {
       show_deletion_success(successMessage);
     }
