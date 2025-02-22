@@ -10,10 +10,9 @@ const Main = () => {
   const [message, setMessage] = useState("");
   const [error_msg, setErrorMessage] = useState("");
 
-  // ! FIx the querying problem
   // ! Implement deletion and updating of data
 
-  TODO: useEffect(() => {
+  useEffect(() => {
     axios
       .get(
         "http://localhost/PHP-Sessions/React-PHP-Api/todo-list/createConnection.php"
